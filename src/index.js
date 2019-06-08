@@ -1,12 +1,52 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+class App extends React.Component {
+    state = { error: null };
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+    handleError = value => {
+        const LEN_ERR = "Length cannot be less than 3";
+        const CHAR_ERR = "Name should contain 'F'";
+        let ERR_MSG = "";
+        if (value.length < 3) {
+            ERR_MSG += LEN_ERR + ". ";
+        }
+        if (value.indexOf("f") === -1) {
+            ERR_MSG += CHAR_ERR + ". ";
+        }
+        return ERR_MSG;
+    };
+
+    handleSubmit = event => {
+        event.preventDefault();
+    };
+    handleChange = event => {
+        const { value } = event.target;
+        this.setState({ error: this.handleError(value) });
+    };
+
+    componentDidMount() {
+        this.setState({ error: this.handleError("") });
+    }
+
+    render() {
+        const validName = "Valid Name";
+        const {error} = this.state;
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>Name: </label>
+                <input
+                    autoComplete="off"
+                    type="text"
+                    name="username"
+                    onChange={this.handleChange}
+                />
+                <button disabled={Boolean(error)}>Submit</button>
+                {error ? <div style={{color: 'red'}}>{error}</div> : <div style={{color: 'green'}}>{validName}</div> }
+            </form>
+        );
+    }
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
